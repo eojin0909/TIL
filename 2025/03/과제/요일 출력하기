@@ -1,0 +1,12 @@
+void main() {
+  var input = '2025-03-11';
+  DateTime date = DateTime.parse(input);
+
+  List<String> weekdays = ['월', '화', '수', '목', '금', '토', '일'];
+
+  String dayOfWeek = weekdays[date.weekday - 1];
+
+  // 결과 출력
+  print('입력한 날짜: $input');
+  print('요일: $dayOfWeek요일');
+}
