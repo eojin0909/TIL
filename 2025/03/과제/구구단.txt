@@ -1,0 +1,10 @@
+void main() {
+
+  for (int a = 2; a <= 9; a++) {
+    print('====$a단====');
+    for (int b = 1; b <= 9; b++) {
+      print('$a x $b = ${a * b}');
+    }
+    print('');
+  }
+}
