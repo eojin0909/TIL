@@ -1,0 +1,80 @@
+var n = 10;
+var result = '';
+void main() {
+
+
+// 꽉찬 사각형
+
+  for (var y = 0; y < n; y++) {
+    for (var x = 0; x < n; x++) {
+      result += '*';
+    }
+    result += '\n';
+  }
+  print(result);
+}
+
+//테두리 사각형
+
+  for (int y = 0; y < n; y++) {
+    for (int x = 0; x < n; x++) {
+      if (y == 0 || y == (n - 1) || x == 0 || x == (n - 1)) {
+        result += '*';
+      } else {
+        result += ' ';
+      }
+    }
+    result += '\n';
+  }
+  print(result);
+}
+
+// /표시 사각형
+
+  for (int y = 0; y < n; y++) {
+    for (int x = 0; x < n; x++) {
+      if (y == 0 || y == (n - 1) || x == 0 || x == (n - 1) || y == (n - x)) {
+        result += '*';
+      } else {
+        result += ' ';
+      }
+    }
+    result += '\n';
+  }
+  print(result);
+}
+
+// \표시 사각형
+
+  for (int y = 0; y < n; y++) {
+    for (int x = 0; x < n; x++) {
+      if (y == 0 || y == (n - 1) || x == 0 || x == (n - 1) || y == x) {
+        result += '*';
+      } else {
+        result += ' ';
+      }
+    }
+    result += '\n';
+  }
+  print(result);
+}
+
+// X표시 사각형
+
+  for (int y = 0; y < n; y++) {
+    for (int x = 0; x < n; x++) {
+      if (y == 0 ||
+          y == (n - 1) ||
+          x == 0 ||
+          x == (n - 1) ||
+          y == x ||
+          y == (n - x)) {
+        result += '*';
+      } else {
+        result += ' ';
+      }
+    }
+    result += '\n';
+  }
+  print(result);
+}
