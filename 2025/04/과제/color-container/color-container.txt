@@ -1,0 +1,74 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Center(
+          child: Container(
+            //에뮬레이터로 실행하였을때 비율이 예쁘지 않아 300 x 300으로 임의로 지정해서 했습니다.
+            width: 300, 
+            height: 300,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black),
+            ),
+            child: Column(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Container(color: Colors.red),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          children: [
+
+                            Expanded(
+                              flex: 1,
+                              child: Container(color: Colors.blue),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: Container(color: Colors.black),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Container(color: Colors.orange),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(color: Colors.yellow),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
