@@ -1,3 +1,111 @@
+# 📘 R Week2 정리
+
+## 📂 환경 설정 및 기본 작업
+```r
+setwd("c:/r_workdata")    # 작업 디렉토리 설정
+getwd()                   # 현재 작업 디렉토리 확인
+Sys.setlocale("LC_ALL", "Korean")  # 한글 로케일 설정
+```
+
+## 📦 패키지 설치 및 로드
+```r
+install.packages("lubridate")
+library(lubridate)
+
+install.packages("installr")
+library(installr)
+
+check.for.updates.R()  # R 업데이트 확인
+install.R()            # R 설치
+```
+
+## 🔢 변수 및 데이터 타입
+```r
+d1 = 100
+class(d1)  # "numeric"
+
+d1 = '100'
+class(d1)  # "character"
+```
+
+## 🧮 연산자와 출력
+```r
+1 + 1
+print(pi, digits = 3)
+cat(1, 2, "d")  # 공백으로 출력
+
+# 연산자
+5 / 2     # 실수 나눗셈
+5 %/% 2   # 정수 나눗셈 (몫)
+5 %% 2    # 나머지
+```
+
+### 📐 지수 표기
+```r
+1e+03  # 1000
+2e-03  # 0.002
+```
+
+### ❗ 형변환
+```r
+as.numeric("1") + as.numeric("2")  # 문자열 -> 숫자 변환
+```
+
+## 🔁 벡터 및 수식
+```r
+a = 1:20       # 1~20 벡터
+a = 2 + (3*5)  # 사칙 연산
+```
+
+## ✅ 논리형 및 NA/NULL
+```r
+3 & 1     # TRUE
+3 | 0     # TRUE
+!0        # TRUE
+
+cat(1, NA, 2)       # NA 포함
+cat(1, NULL, 2)     # NULL은 출력 제외
+
+sum(1, NA, 2)       # NA 포함 시 NA
+sum(1, NULL, 2)     # NULL은 제외
+```
+
+## 📊 데이터프레임 & factor
+```r
+t1 = read.csv("factor_test.txt")
+str(t1)           # 데이터 구조 확인
+f1 = factor(t1$blood)
+summary(f1)       # 각 요소 개수 요약
+```
+
+## 📆 날짜/시간 처리
+```r
+Sys.Date()        # 오늘 날짜
+Sys.time()        # 현재 시간
+date()            # 현재 날짜/시간 (문자)
+
+# 날짜 변환
+a = as.Date("2002-05-21")
+as.Date("03-12-2023", format="%m-%d-%Y")
+as.Date("2023년 3월 10일", format="%Y년 %m월 %d일")
+
+# 날짜 계산
+as.Date(100, origin="2025-03-21")     # 기준일 + 100일
+as.Date(-100, origin="2025-03-21")    # 기준일 - 100일
+as.Date("2025-03-21") + 100           # 직접 더하기
+```
+
+## 📌 자주 사용하는 함수 요약
+| 함수 | 설명 |
+|------|------|
+| `setwd()`, `getwd()` | 작업 디렉토리 설정/확인 |
+| `class()` | 객체 타입 확인 |
+| `as.Date()`, `Sys.Date()` | 날짜 관련 함수 |
+| `factor()`, `summary()` | 범주형 데이터 처리 |
+| `cat()`, `print()` | 출력 함수 |
+| `as.numeric()` | 형변환 |
+| `sum()` | 합계 계산 (NA/NULL 주의) |
+
 # 📅 Week 3: R 언어 기초 및 날짜 처리
 
 ## ✅ 날짜 처리 및 `lubridate` 패키지
