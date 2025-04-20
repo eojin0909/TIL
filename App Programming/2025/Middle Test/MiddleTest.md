@@ -89,9 +89,9 @@ Set<String> uniqueCities = {'서울', '부산'};
 ### ✅ 컬렉션 제어
 ```dart
 // if
-var list = [1, 2, if (condition) 3];
+var list = [1, 2, if (condition) 3];  		#[1, 2, 3]
 // for
-var squares = [for (var i in [1,2,3]) i * i];
+var squares = [for (var i in [1,2,3]) i * i]; 	#[1, 4, 9]
 ```
 
 ### ✅ 함수형 프로그래밍 특징 요약
