@@ -25,13 +25,13 @@ TRUE | FALSE  # TRUE
 ## ✅ 3. 벡터 활용 함수
 ```r
 v1 <- c(1, 2, 3, 4, 5)
-length(v1)              # 5
-append(v1, 6)           # [1] 1 2 3 4 5 6
-append(v1, c(11,12) affter = 3)           # [1] 1 2 3 11 12 4 5
-v1[1:(length(v1)-2)]    # [1] 1 2 3
-setdiff(v1, c(2,3))     # [1] 1 4 5
-intersect(v1, c(2,3))   # [1] 2 3
-rep(1:3, each=2)        # [1] 1 1 2 2 3 3
+length(v1)                      # 5
+append(v1, 6)                   # [1] 1 2 3 4 5 6
+append(v1, c(11,12) after = 3)  # [1] 1 2 3 11 12 4 5
+v1[1:(length(v1)-2)]            # [1] 1 2 3
+setdiff(v1, c(2,3))             # [1] 1 4 5
+intersect(v1, c(2,3))           # [1] 2 3
+rep(1:3, each=2)                # [1] 1 1 2 2 3 3
 ```
 
 ## ✅ 4. matrix 활용 함수 (실습 포함)
