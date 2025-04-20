@@ -65,14 +65,9 @@ subset(sales, PRICE >= 200)
 
 ### ✅ 함수 설명 및 예시
 ```r
-mean(c(1,2,3))  # 평균
-sd(c(1,2,3))  # 표준편차
-sort(c(3,1,2))  # 정렬
-apply(matrix(1:4,2), 1, sum)  # 행별 합
-lapply(list(1:3, 4:6), sum)  # 리스트 요소별 합
-tapply(mtcars$mpg, mtcars$cyl, mean)  # 그룹 평균
 aggregate() : 다양한 함수를 사용하여 결과 출력
 apply() : 다양한 기능
+apply(matrix(1:4,2), 1, sum)  # 행별 합
 cor() : 상관함수
 cumsum() : 설정된 지점까지의 누적합
 cumporm() : 설정된 지점까지의 누적곱
@@ -80,18 +75,19 @@ diff() : 차이나는 부분 찾음
 length() : 요소 갯수
 max() : 최대값
 min() : 최소값
-mean() : 평균
+mean(c(1,2,3))  # 평균
 median() : 중앙값
 order() : 요소의 원위치
 prod() : 누적곱
 range() : 범위
 rank() : 순위
-sd() : 표준편차
+sd(c(1,2,3))  # 표준편차
 rev() : 역순
-sort() : 정렬
+sort(c(3,1,2))  # 정렬
 summary() : 요약
 sweep() : 일괄적 빼기
-tapply() : 백터에서 주어진 함수 연산
+lapply(list(1:3, 4:6), sum)  # 리스트 요소별 합
+tapply(mtcars$mpg, mtcars$cyl, mean)  # 그룹 평균
 var() : 분산
 ```
 
