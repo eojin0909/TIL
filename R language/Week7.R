@@ -117,35 +117,3 @@ d1 %>%
 d1 %>% 
   group_by(팀) %>% 
   dplyr::summarise(across(c(경기, 타수),mean))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
