@@ -1,120 +1,101 @@
-# 📚 R 언어 TIL 핵심 요약
+# 🧠 R 핵심 개념 요약 (요청 항목 기준)
 
----
-
-## 📘 벡터 작성 (날짜 구하기)
-
+## ✅ 1. 벡터 작성 (날짜 구하기)
 ```r
-# 벡터 생성
+seq(as.Date("2025-01-01"), as.Date("2025-12-31"), by = "month")
+# 결과: 
+# [1] "2025-01-01" "2025-02-01" "2025-03-01" "2025-04-01" "2025-05-01"
+# [6] "2025-06-01" "2025-07-01" "2025-08-01" "2025-09-01" "2025-10-01"
+# [11] "2025-11-01" "2025-12-01"
+
+as.Date("2022-02-14") - as.Date("21.11.06", format = "%y.%m.%d")
+# 결과: Time difference of 100 days
+```
+
+## ✅ 2. 연산자 활용
+```r
+5 + 2      # 7
+5 %/% 2    # 2
+5 %% 2     # 1
+TRUE & FALSE  # FALSE
+TRUE | FALSE  # TRUE
+!TRUE         # FALSE
+```
+
+## ✅ 3. 벡터 활용 함수
+```r
 v1 <- c(1, 2, 3, 4, 5)
-length(v1)
-
-# 날짜 구하기
-as.Date("2022-02-14") - as.Date("21.11.06", format="%y.%m.%d")
-
-# lubridate 사용
-library(lubridate)
-d <- now()
-year(d); month(d); day(d); wday(d, label = TRUE)
-
-# 날짜 계산
-d + years(1) + months(2) + days(3) + hours(4) + minutes(5) + seconds(6)
+length(v1)              # 5
+append(v1, 6)           # [1] 1 2 3 4 5 6
+v1[1:(length(v1)-2)]    # [1] 1 2 3
+setdiff(v1, c(2,3))     # [1] 1 4 5
+intersect(v1, c(2,3))   # [1] 2 3
+rep(1:3, each=2)        # [1] 1 1 2 2 3 3
 ```
 
----
-
-## 🧮 연산자 활용
-
+## ✅ 4. matrix 활용 함수 (실습 포함)
 ```r
-# 기본 산술 연산
-a <- 10; b <- 3
-a + b; a - b; a * b; a / b; a %% b; a %/% b
+m <- matrix(1:6, nrow=2, byrow=TRUE)
+# m =
+#      [,1] [,2] [,3]
+# [1,]    1    2    3
+# [2,]    4    5    6
 
-# 비교 연산
-a > b; a == b; a != b
-
-# 논리 연산
-TRUE & FALSE
-TRUE | FALSE
-!TRUE
+m[, "2"]               # 에러 (문자 인덱싱 안됨, 숫자 인덱스로 해야 함)
+m[,2]                  # [1] 2 5
+m[m[,3] > 2, ]         # [2,] 4 5 6
 ```
 
----
-
-## 🧪 벡터 활용 함수
-
+## ✅ 5. list 활용 함수
 ```r
-# set 연산
-union(c(1,2), c(2,3))
-setdiff(c(1,2,3), c(2,3))
-intersect(c(1,2,3), c(2,3))
-
-# 이름 붙이기
-f <- c(10, 20, 30)
-names(f) <- c("apple", "banana", "peach")
-
-# 포함 여부
-3 %in% c(1,2,3)
-```
-
----
-
-## 🧱 matrix 활용 함수 (matrix 관련 실습 문제)
-
-```r
-# 생성 및 색인
-m <- matrix(1:9, nrow=3, byrow=TRUE)
-rownames(m) <- c("1", "2", "3")
-colnames(m) <- c("a", "b", "c")
-m[2,3]
-m[m >= 5]
-
-# 실습 예시
-m1 <- matrix(1:20, 4, by=T)
-m1[m1[,'c'] >= 10, ]
-```
-
----
-
-## 📦 list 활용 함수
-
-```r
-# 리스트 생성 및 조작
-l1 <- list(name="홍길동", addr="서울", tel="010", pay=500)
-l1$birth <- "2002"
-l1$name <- c("고길동", "마이콜")
+l1 <- list(name = "홍길동", addr = "서울", tel = "010")
+l1$addr                       # [1] "서울"
+l1$birth <- "2002"           # 추가
 l1$name <- append(l1$name, "둘리", after=1)
-l1$name[length(l1$name)-1] <- NA
-l1$birth <- NULL
+# $name
+# [1] "홍길동" "둘리"
+
+l1$birth <- NULL             # 삭제
 ```
 
----
-
-## 🧾 데이터프레임 (2가지 방법 및 처리 문제)
-
+## ✅ 6. 데이터프레임 (2가지 생성 방법 및 처리)
 ```r
-# 방법 1: 컬럼별 생성
-df1 <- data.frame(NO=1:3, NAME=c("apple", "banana", "peach"), PRICE=c(100,200,300))
+# 방법 1
+df1 <- data.frame(NO=c(1,2), NAME=c("apple","banana"), PRICE=c(100,200))
+# 방법 2
+no <- c(1,2); name <- c("apple","banana"); price <- c(100,200)
+df2 <- data.frame(NO=no, NAME=name, PRICE=price)
 
-# 방법 2: 행렬 → data.frame
-m <- matrix(c(1, "apple", 100, 5, 2, "banana", 200, 10), 2, byrow=T)
-df2 <- data.frame(m)
-
-# 열/행 추가
-df1 <- rbind(df1, data.frame(NO=4, NAME="mango", PRICE=400))
-df1 <- cbind(df1, QTY=c(10, 20, 30, 40))
-```
-
----
-
-## 🧩 subset 함수
-
-```r
-# 조건 검색
+# 행 추가
+df1 <- rbind(df1, data.frame(NO=3, NAME="peach", PRICE=300))
+# 열 추가
+df1 <- cbind(df1, QTY=c(10,20,30))
+# 조건 필터
 subset(df1, PRICE >= 200)
-subset(df1, NAME == "apple")
+# 결과:
+#   NO   NAME PRICE QTY
+# 2  2 banana   200  20
+# 3  3  peach   300  30
+```
 
-# 특정 컬럼 선택
+## ✅ 7. subset 함수
+```r
+subset(df1, QTY <= 10)
+# 결과:
+#   NO  NAME PRICE QTY
+# 1  1 apple   100  10
+
 subset(df1, select = c(NO, NAME))
+# 결과:
+#   NO   NAME
+# 1  1  apple
+# 2  2 banana
+# 3  3  peach
+
 subset(df1, select = -PRICE)
+# 결과:
+#   NO   NAME QTY
+# 1  1  apple  10
+# 2  2 banana  20
+# 3  3  peach  30
 ```
