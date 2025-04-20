@@ -1,4 +1,4 @@
-# 📅 TIL - Week 3: R 언어 기초 및 날짜 처리
+# 📅 Week 3: R 언어 기초 및 날짜 처리
 
 ## ✅ 날짜 처리 및 `lubridate` 패키지
 
@@ -145,7 +145,7 @@ v1[1:(length(v1)-2)]
 | `%in%` | 포함 여부 확인 |
 
 
-# 📅 TIL - Week 4: R 언어 벡터, 행렬, 배열 실습
+# 📅 Week 4: R 언어 벡터, 행렬, 배열 실습
 
 ## ✅ 날짜와 벡터 기본
 
@@ -302,7 +302,7 @@ a2[1,1,3]
 | `array()` | 배열 생성 |
 
 
-# 📅 TIL - Week 5: R 언어 리스트, 데이터프레임, 파일 입출력
+# 📅 Week 5: R 언어 리스트, 데이터프레임, 파일 입출력
 
 ## 📦 리스트 (List)
 
@@ -472,7 +472,7 @@ write.table(df, "output.txt")
 | `write.table()` | 텍스트 파일 저장 |
 
 
-# 📅 TIL - Week 6: R 데이터 요약 함수, 사용자 정의 함수, plyr 패키지
+# 📅 Week 6: R 데이터 요약 함수, 사용자 정의 함수, plyr 패키지
 
 ## 📌 자주 사용되는 기본 함수
 
@@ -617,7 +617,7 @@ ddply(f, 'name', transform, pct_qty = round(qty*100/sum(qty), 2))
 - `plyr`: 그룹별 요약 및 변환
 
 
-# 📅 TIL - Week 7: dplyr 패키지로 데이터 조작 실습
+# 📅 Week 7: dplyr 패키지로 데이터 조작 실습
 
 ## 📦 dplyr 주요 함수
 
