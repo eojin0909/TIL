@@ -184,13 +184,18 @@ UI 갱신	 | ❌ 불가능		 | ✅ 가능 |
 - `DropdownButton`: 드롭다운 목록에서 하나 선택
 
 ### ✅ 다이얼로그 & 날짜/시간 선택기
-- `AlertDialog`: 경고나 알림을 위한 팝업 창
-- `DatePicker`: 날짜 선택을 위한 달력 위젯
-- `TimePicker`: 시간 선택을 위한 시계 위젯
+- `AlertDialog`: 경고나 알림을 위한 팝업 창( showDialog 사용해야됨 )
+- `DatePicker`: 날짜 선택을 위한 달력 위젯 ( showDatePicker 사용해야됨 )
+- `TimePicker`: 시간 선택을 위한 시계 위젯 ( showTimePicker 사용해야됨 )
 
 ### ✅ 이벤트
 - `GestureDetector`: 터치 제스처 감지 및 처리
 - `InkWell`: 터치 시 시각적 효과가 있는 터치 피드백 위젯
+| 비교 항목 | GestureDetector | InkWell |
+|------|------|------|
+| 터치 감지 | 가능 | 가능 |
+| 시각적 피드백 | 없음 | 물결 효과 있음 |
+| Material 필요 여부 | 필요 없음 | Material 위젯 안에서만 제대로 동작 |
 
 ### ✅ 애니메이션
 - `Hero`: 위젯 전환 시 애니메이션 효과로 자연스러운 화면 이동
@@ -202,7 +207,6 @@ UI 갱신	 | ❌ 불가능		 | ✅ 가능 |
 ### ✅ iOS 디자인 위젯
 - `CupertinoAlertDialog`: iOS 스타일의 알림 팝업
 - `CupertinoPicker`: iOS 스타일의 선택 휠
-
 
 ## 🔀 6장. 내비게이션
 
@@ -241,9 +245,10 @@ Navigator.pushNamed(context, '/second');
 
 ### 📌 주요 키워드
 - `?` : 널 허용 타입 선언
-- `??` : 널 병합 연산자 (null일 경우 기본값 사용)
-- `!` : null 아님을 확신할 때 강제 사용 (주의!)
 - `?.` : null-safe 접근 연산자
+- `??` : 널 병합 연산자 (null일 경우 기본값 사용)
+- `!` : null 아님을 확신 – 단독 사용 
+- `!.` : null 아님을 확신 + 그 안의 속성에 접근 – 연쇄 접근
 
 ---
 
