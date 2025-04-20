@@ -10,7 +10,7 @@ v1 <- c(1, 2, 3, 4, 5)
 length(v1)
 
 # 날짜 다루기
-as.Date("2022-02-14") - as.Date("21.11.06", format="%y.%d.%m")
+as.Date("2022-02-14") - as.Date("21.11.06", format="%y.%m.%d")
 
 # lubridate 사용
 library(lubridate)
