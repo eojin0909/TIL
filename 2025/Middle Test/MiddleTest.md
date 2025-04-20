@@ -221,12 +221,6 @@ Navigator.pushNamed(context, '/second');
 
 ## 🆕 8장. Flutter 2 변경점
 
-1. **웹 앱 지원**
-2. **데스크탑 앱 정식 지원 (윈도우/맥/리눅스)**
-3. **사운드 널 안전성**
-4. **플랫폼별 UI 자동 적용** (`flutter_platform_widgets`)
-5. **DevTools 강화**: 위젯 구조 시각화, 성능 분석 등
-
 ## ⚠️ 널 안전한 코드
 
 ### 🌟 핵심 개념
