@@ -270,33 +270,3 @@ t3 = read.table("csv_text.txt")
 t3
 
 t3 = read.table("csv_test.txt", sep=',', header = T)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
