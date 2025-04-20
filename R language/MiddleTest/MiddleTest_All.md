@@ -628,7 +628,7 @@ ddply(f, 'name', transform, pct_qty = round(qty*100/sum(qty), 2))
 | `arrange()` | 정렬 |
 | `mutate()` | 새로운 열(변수) 생성 |
 | `summarise()` + `group_by()` | 집계 (평균, 합계 등) |
-| 파이프 연산자 '%>%'  | 여러문장을 조합해서 사용, (ctrl + shift + m) 어떤 문장을 먼저 사용하든 상관없음 |
+| 파이프 연산자 `%>%` | 여러문장을 조합해서 사용, (ctrl + shift + m) 어떤 문장을 먼저 사용하든 상관없음 |
 
 ---
 
