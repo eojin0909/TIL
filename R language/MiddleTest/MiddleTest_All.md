@@ -105,12 +105,22 @@ myfun(5, 3)
 
 ### ✅ 함수 설명 및 예시
 ```r
+# dplyr() : plyr()와 동시에 사용한다면 plyr 패키지의 함수가 우선 적용(뭐 그냥 막 알아서 우선 적용됨)
+# 특성함수
+# 1) filter : 조건을 줘서 필터링
+# 2) select : 특정 컬럼만 선택 
+# 3) arrange : 정렬
+# 4) mutate : 새로운 변수생성
+# 5) summarise( with group_by ) : 주어진 데이터를 집계( min, max, count )
+```
+```r
 library(dplyr)
 df <- data.frame(name=c("홍", "김"), age=c(22, 25))
 df %>% filter(age > 23)  # 행 필터링
 df %>% select(name)  # 열 선택
 df %>% mutate(adult = age >= 20)  # 새 열 추가
 df %>% summarise(mean_age = mean(age))  # 요약
+
 ```
 
 ### ✅ 실습 예시
