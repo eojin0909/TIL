@@ -15,7 +15,7 @@
 
 ### ✅ 환경 구성 검사
 - `flutter doctor` 명령어로 확인
-- VSCode: `pubspec.yaml` 파일 상단 클릭으로도 가능
+- 프로젝트 창에서 'flutter_app > test > pubspec.yaml'을 선택 후, 오른쪽 상단에 표시된 4가지 링크 중 'Flutter doctor'를 클릭 하단 Flutter창에서 확인 가능 
 - 자세한 정보: `flutter doctor --verbose`
 
 ## 🔤 2장. Dart 문법 기초
