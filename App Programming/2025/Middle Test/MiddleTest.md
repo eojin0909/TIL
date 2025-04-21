@@ -28,7 +28,7 @@ String name = "홍길동";
 bool isTrue = true;
 ```
 
-### ✅ const / final
+### ✅  final / const
 - 한 번 설정한 값을 변경 불가
 차이점
 - final : run타입 검사
