@@ -1,4 +1,3 @@
-아래는 위에서 정리한 AWS 시험 대비 내용을 `.md` (Markdown) 형식으로 변환한 거야. 바로 복붙해서 GitHub, VS Code, Obsidian 등 어디서든 사용 가능해!
 
 ---
 
