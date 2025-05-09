@@ -1,0 +1,31 @@
+def count_connected_components(n, edge_list):
+    graph = [[] for _ in range(n + 1)]
+    visited = [False] * (n + 1)
+
+    for u, v in edge_list:
+        graph[u].append(v)
+        graph[v].append(u) 
+
+    def dfs_stack(start):
+        stack = [start]
+        while stack:
+            node = stack.pop()
+            if not visited[node]:
+                visited[node] = True
+                for neighbor in graph[node]:
+                    if not visited[neighbor]:
+                        stack.append(neighbor)
+
+    count = 0
+    for i in range(1, n + 1):
+        if not visited[i]:
+            dfs_stack(i)
+            count += 1
+
+    return count
+
+
+if __name__ == "__main__":
+    n, m = map(int, input().split())
+    edges = [tuple(map(int, input().split())) for _ in range(m)]
+    print(count_connected_components(n, edges))
