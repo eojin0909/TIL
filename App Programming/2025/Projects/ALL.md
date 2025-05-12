@@ -32,7 +32,7 @@
 
 ---
 
-# 🧠 TIL: Flutter 개발환경 세팅 + Firebase 연동 + Firestore 설계
+# 🧠 Flutter 개발환경 세팅 + Firebase 연동 + Firestore 설계
 
 ## 📅 2025-05-12
 
