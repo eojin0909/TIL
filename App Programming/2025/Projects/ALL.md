@@ -138,3 +138,67 @@ flutter doctor            # 환경 진단
 
 ---
 
+# Flutter 로그인 → 메인화면 전환 + 메인 & 기록화면 레이아웃
+
+## ✅ 1. 로그인 화면 레이아웃
+
+- 이메일 & 비밀번호 입력 필드 구성
+- 로그인 버튼 클릭 시 `MainPage`로 전환
+- `Navigator.pushReplacement()` 사용해 뒤로가기 차단
+
+```dart
+ElevatedButton(
+  onPressed: () {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => MainPage()),
+    );
+  },
+  child: Text("로그인"),
+);
+```
+
+---
+
+## ✅ 2. 메인화면 레이아웃
+
+- 앱 상단에는 AppBar(`마음가GYM`)
+- 개인 운동 루틴을 카드 형태로 표시
+- 각 루틴 카드에는 [운동 추가] / [루틴 수정] 버튼
+- 하단에 BottomNavigationBar로 화면 전환 (운동 | 기록 | 설정)
+- 통계 차트 자리 placeholder 포함
+
+```dart
+Text("내 운동 루틴", style: Theme.of(context).textTheme.titleLarge),
+RoutineCard(routineName: "하체 루틴"),
+RoutineCard(routineName: "상체 루틴"),
+Text("📊 최근 운동 통계"),
+Container(height: 150, child: Center(child: Text("차트 자리"))),
+```
+
+---
+
+## ✅ 3. 기록화면 레이아웃
+
+- 기본 ListView로 날짜별 운동 기록 출력
+- `ListTile` 사용하여 날짜 + 루틴 이름 표시
+
+```dart
+ListTile(
+  leading: Icon(Icons.calendar_today),
+  title: Text("상체 루틴"),
+  subtitle: Text("2025-05-19"),
+);
+```
+
+---
+
+## ✅ 4. 전체 흐름 요약
+
+1. 앱 시작 시 `LoginPage` 노출
+2. 로그인 버튼 클릭 → `MainPage`로 이동
+3. MainPage 내부는 탭 구조로 운동, 기록, 설정 화면 전환 가능
+
+---
+
+
