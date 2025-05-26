@@ -203,4 +203,121 @@ ListTile(
 
 ---
 
+# 🧠 Flutter 회원가입/ 로그인 기능 개발, 운동 루틴 CRUD 개발
+
+## 📅 2025-05-26
+
+## 📌 1. Flutter 회원가입/ 로그인 기능 개발
+
+## 🔧 사용 기술
+- Flutter
+- Firebase Authentication (Phone Sign-In)
+- Cloud Firestore
+
+---
+
+## 📌 목표
+사용자가 전화번호로 회원가입하고, 인증번호를 입력하여 인증이 완료되면 Firestore에 사용자 정보를 저장하는 기능을 구현한다.
+
+---
+
+## ✅ 구현 흐름
+
+### 1. 전화번호 입력 받기
+- `+82` 앞자리 고정 표시
+- 사용자는 `01012345678` 형식으로 입력 (내부에서 앞의 `0` 제거하여 `+821012345678`로 변환)
+
+```dart
+final rawPhone = phoneController.text.trim();
+final phoneNumber = '+82${rawPhone.startsWith('0') ? rawPhone.substring(1) : rawPhone}';
+```
+
+---
+
+### 2. 인증번호 요청
+
+- `verifyPhoneNumber()` 호출
+- Firebase가 인증번호를 문자로 발송함
+- `codeSent` 콜백에서 `verificationId` 저장
+
+```dart
+await FirebaseAuth.instance.verifyPhoneNumber(
+  phoneNumber: phoneNumber,
+  codeSent: (String verificationId, int? resendToken) {
+    setState(() {
+      _verificationId = verificationId;
+      _startTimer(); // 타이머 시작
+    });
+  },
+);
+```
+
+---
+
+### 3. 타이머 UI 표시
+
+- 인증번호 발송 시 60초 타이머 시작
+- `suffixText: '$_secondsRemaining초'` 형식으로 인증창 우측에 표시
+
+---
+
+### 4. 인증번호 확인
+
+- 입력받은 인증번호(`smsCode`)와 저장된 `verificationId`를 사용해 인증 처리
+
+```dart
+final credential = PhoneAuthProvider.credential(
+  verificationId: _verificationId!,
+  smsCode: smsCodeController.text.trim(),
+);
+
+await FirebaseAuth.instance.signInWithCredential(credential);
+```
+
+---
+
+### 5. Firestore에 사용자 정보 저장
+
+```dart
+await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+  'phone': phoneNumber,
+  'nickname': nicknameController.text.trim(),
+  'isApproved': false,
+  'createdAt': FieldValue.serverTimestamp(),
+  'role': 'user',
+});
+```
+
+---
+
+## 🔁 추가 기능
+
+- 1분 타이머 만료 시 `"인증번호 재요청"` 버튼 활성화
+- 재요청 시 `verifyPhoneNumber()` 재실행
+- 인증 실패 시 에러 메시지 출력
+
+---
+
+## 🧠 주의사항
+
+| 항목 | 설명 |
+|------|------|
+| SHA-1 키 등록 | Firebase 콘솔에 디버그 SHA-1 등록 필요 |
+| 앱 서명 문제 | `BILLING_NOT_ENABLED`, `reCAPTCHA` 관련 에러 해결 필요 |
+| Firebase 프로젝트 Billing | 전화 인증 시 GCP 결제 계정 연결 필요 |
+| 테스트 시 실제 기기 | 에뮬레이터는 SMS 수신 불가 |
+
+---
+
+## 📝 참고
+
+- Firebase Auth Phone 인증: [공식 문서](https://firebase.google.com/docs/auth/flutter/phone-auth)
+- SHA-1 키 확인: `gradlew signingReport`
+
+### 📊 간트차트
+
+![간트차트](./image/간트차트_002.png)
+
+---
+
 
