@@ -314,6 +314,7 @@ await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
 - Firebase Auth Phone 인증: [공식 문서](https://firebase.google.com/docs/auth/flutter/phone-auth)
 - SHA-1 키 확인: `gradlew signingReport`
 
+---
 ### 📊 간트차트
 
 ![간트차트](./image/간트차트_002.png)
