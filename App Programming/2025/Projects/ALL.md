@@ -315,7 +315,7 @@ await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
 - SHA-1 키 확인: `gradlew signingReport`
 
 ---
-# 📆 TIL - Flutter + Firebase 운동 루틴 CRUD 앱 만들기
+# 📆 Flutter + Firebase 운동 루틴 CRUD 앱 만들기
 
 ## ✅ 사용 스택
 - Flutter
