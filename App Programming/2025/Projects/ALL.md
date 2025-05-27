@@ -315,6 +315,116 @@ await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
 - SHA-1 키 확인: `gradlew signingReport`
 
 ---
+# 📆 TIL - Flutter + Firebase 운동 루틴 CRUD 앱 만들기
+
+## ✅ 사용 스택
+- Flutter
+- Firebase Firestore
+- uuid 패키지 (ID 생성용)
+
+---
+
+## 📌 주요 기능
+- 운동 루틴 Create / Read / Update / Delete (CRUD)
+- 실시간 Firestore 연동
+- 날짜 선택, 입력 폼 제공
+
+---
+
+## 📁 폴더 구조
+```
+lib/
+├── models/
+│   └── workout_routine.dart       # 데이터 모델
+├── services/
+│   └── firestore_service.dart     # CRUD 서비스
+├── screens/
+│   ├── routine_list_screen.dart   # 루틴 목록 + 삭제 + 이동
+│   ├── add_routine_screen.dart    # 루틴 추가
+│   └── edit_routine_screen.dart   # 루틴 수정
+└── main.dart                      # 앱 진입점
+```
+
+---
+
+## 🧱 1단계: 데이터 모델 생성
+
+```dart
+class WorkoutRoutine {
+  String id;
+  String name;
+  int sets;
+  int reps;
+  DateTime date;
+  String note;
+
+  WorkoutRoutine({ ... });
+
+  Map<String, dynamic> toMap() => {...};
+  factory WorkoutRoutine.fromMap(Map<String, dynamic> map) => ...;
+}
+```
+
+---
+
+## 🧾 2단계: Firebase CRUD 함수 구현
+
+```dart
+class FirestoreService {
+  final routinesRef = FirebaseFirestore.instance.collection('routines');
+
+  Future<void> addRoutine(WorkoutRoutine r);
+  Stream<List<WorkoutRoutine>> getRoutines();
+  Future<void> updateRoutine(WorkoutRoutine r);
+  Future<void> deleteRoutine(String id);
+}
+```
+
+---
+
+## 📋 3단계: 루틴 목록 화면 (Read + Delete)
+
+```dart
+StreamBuilder<List<WorkoutRoutine>>(...)
+ListTile(
+  title: Text('이름 (세트x반복)'),
+  trailing: IconButton(icon: Icon(Icons.delete))
+)
+```
+
+➕ 버튼으로 루틴 추가 화면 이동
+
+---
+
+## ➕ 4단계: 루틴 추가 화면 (Create)
+
+- TextFormField로 입력
+- showDatePicker()로 날짜 선택
+- `FirestoreService.addRoutine()` 호출
+
+---
+
+## ✏️ 5단계: 루틴 수정 화면 (Update)
+
+- 기존 값 입력된 상태로 TextFormField
+- 수정 후 `updateRoutine()` 호출
+- 루틴 목록으로 복귀
+
+---
+
+## 🔧 기타
+- `uuid: ^4.x.x` 패키지 사용 (ID 생성용)
+- 날짜는 `toIso8601String()` / `DateTime.parse()`로 변환
+
+---
+
+## ✅ 결과
+- 실시간 운동 루틴 관리 앱 완성
+- 구조 분리 및 유지보수 쉬운 코드 작성
+
+---
+
+
 ### 📊 간트차트
 
 ![간트차트](./image/간트차트_002.png)
