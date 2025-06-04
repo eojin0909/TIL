@@ -4,6 +4,4 @@
 
 이상치 확인및 제거 : 사용되는 차트
 
-barplot 활용
-
-ggplot2 활용
+barplot/ggplot2 활용 + 막대그래프
