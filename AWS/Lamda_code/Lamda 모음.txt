@@ -1,0 +1,380 @@
+sgu-202567-Lambda
+
+import json
+
+def lambda_handler(event, context):
+    # TODO implement
+    return {
+        'statusCode': 200,
+        "statusDescription":"200 OK",
+        "isBase64Encoded" : False,
+        "headers":{
+            "Content-Type":"application/json"
+        },
+        'body': '{"message":"Hello Lambda"}'
+    }
+-------------------------------------------------------------------------
+sgu-202567-lambda2
+
+import json
+import boto3
+from datetime import datetime
+
+def lambda_handler(event, context):
+    s3 = boto3.client('s3')
+    bucket_name = 'sgu-202567-s3'
+    prefix = 'uploaded/'
+
+    now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    filename = f'{prefix}hello_{now}.txt'
+    content = f'Hello Haeri! This file was created at {now}'
+
+    # S3에 파일 업로드
+    s3.put_object(
+        Bucket=bucket_name,
+        Key=filename,
+        Body=content.encode('utf-8')
+    )
+
+    return {
+        "statusCode": 200,
+        "statusDescription": "200 OK",
+        "isBase64Encoded": False,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": '{"message": "업로드 완료"}'
+    }
+------------------------------------------------------------------------
+sgu-202567-dynamo
+
+import boto3
+
+def lambda_handler(event, context):
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('sgu-202567-user-likes')
+
+    # 덮어쓰기할 항목
+    response = table.put_item(
+        Item={
+            'user_id': 'jihoon07',
+            'product_name': '제로콜라'
+        }
+    )
+
+    return {
+        'statusCode': 200,
+        'body': 'PutItem successful!'
+    }
+------------------------------------------------------------------------
+sgu-202567-LambdaA
+
+import boto3
+import json
+
+ec2 = boto3.client('ec2')
+sns = boto3.client('sns')
+lambda_client = boto3.client('lambda')
+
+INSTANCE_ID = 'i-06b650f8b77158f7c'
+SNS_TOPIC_ARN = 'arn:aws:sns:ap-northeast-2:443370697536:sgu-202567-MyTopic'
+
+def lambda_handler(event, context):
+    response = ec2.describe_instance_status(InstanceIds=[INSTANCE_ID])
+    statuses = response.get('InstanceStatuses', [])
+
+    if not statuses or statuses[0]['InstanceState']['Name'] != 'running':
+        message = f"경고: EC2 인스턴스 {INSTANCE_ID} 상태가 'stopped'입니다."
+
+        sns.publish(
+            TopicArn=SNS_TOPIC_ARN,
+            Subject='EC2 인스턴스 상태 경고',
+            Message=message
+        )
+
+        # LambdaB를 안전하게 비동기 호출
+        lambda_client.invoke(
+            FunctionName='sgu-202567-LambdaB',
+            InvocationType='Event',
+            Payload=json.dumps({"instance_id": INSTANCE_ID}).encode('utf-8')
+        )
+----------------------------------------------------------------------------------------------
+sgu-202567-LambdaB
+
+import boto3
+import json
+
+ec2 = boto3.client('ec2')
+
+def lambda_handler(event, context):
+    # LambdaA에서 호출 시: {"instance_id": "i-xxxx"}
+    # 수동 테스트 시: {"instance_id": "i-xxxx"} 직접 입력 가능
+    instance_id = event.get('instance_id') or json.loads(event.get('body', '{}')).get('instance_id')
+
+    if not instance_id:
+        raise ValueError("instance_id가 전달되지 않았습니다.")
+
+    ec2.start_instances(InstanceIds=[instance_id])
+---------------------------------------------------------------------------------------------------
+sgu-202567-dynamo-post-api
+
+import boto3
+import json
+from datetime import datetime
+
+def lambda_handler(event, context):
+    try:
+        # 요청 본문 파싱
+        body = json.loads(event['body'])
+        user_id = body['user_id']
+        product = body['product']
+        timestamp = datetime.now().isoformat()
+
+        # 선택적 필드들 (있으면 저장, 없으면 None)
+        reason = body.get('reason')
+        brand = body.get('brand')
+        price = body.get('price')
+        color = body.get('color')
+
+        # 저장할 항목 구성
+        item = {
+            'user_id': user_id,
+            'timestamp': timestamp,
+            'product': product
+        }
+
+        # 선택 필드가 있는 경우만 추가
+        if reason:
+            item['reason'] = reason
+        if brand:
+            item['brand'] = brand
+        if price:
+            item['price'] = price
+        if color:
+            item['color'] = color
+
+        # DynamoDB 저장
+        table = boto3.resource('dynamodb').Table('sgu-202567-user-likes-time')
+        table.put_item(Item=item)
+
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'message': '저장 완료',
+                'user_id': user_id,
+                'timestamp': timestamp
+            }, ensure_ascii=False)
+        }
+
+    except Exception as e:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': str(e)}, ensure_ascii=False)
+        }
+---------------------------------------------------------------------------------
+sgu-202567-dynamodb-3c
+
+import json
+import boto3
+from datetime import datetime
+
+def lambda_handler(event, context):
+    # 클라이언트 및 리소스 생성
+    s3 = boto3.client('s3')
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('sgu-202567-user-likes-time')
+
+    # 버킷과 키 지정
+    bucket_name = 'sgu-202567-s3'
+    object_key = 'dynamo_data/user_likes_data.json'
+
+    try:
+        # S3에서 JSON 파일 읽기
+        response = s3.get_object(Bucket=bucket_name, Key=object_key)
+        content = response['Body'].read().decode('utf-8')
+        data = json.loads(content)
+
+        # 타임스탬프 추가
+        timestamp = datetime.now().isoformat()
+        data['timestamp'] = timestamp
+
+        # DynamoDB 삽입
+        table.put_item(Item=data)
+
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'message': 'DynamoDB insert successful!',
+                'item': data
+            }, ensure_ascii=False)
+        }
+
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({
+                'error': str(e)
+            }, ensure_ascii=False)
+        }
+--------------------------------------------------------------------------------------
+sgu-202567-dynamo-3c
+
+import json
+import boto3
+from datetime import datetime
+
+def lambda_handler(event, context):
+    s3 = boto3.client('s3')
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('sgu-202567-user-likes-time')
+    
+    bucket_name = 'sgu-202567-s3'
+    object_key = 'dynamo_data/user_likes_data_2.json'
+
+    try:
+        # 1. S3에서 파일 가져오기
+        response = s3.get_object(Bucket=bucket_name, Key=object_key)
+        content = response['Body'].read().decode('utf-8')
+        raw_data = json.loads(content)
+
+        # 2. 필요한 필드만 추출
+        user_id = raw_data.get('user_id')
+        product = raw_data.get('product')
+        
+        if not user_id or not product:
+            return {
+                'statusCode': 400,
+                'body': '필수 데이터 누락: user_id 또는 product가 없습니다.'
+            }
+
+        # 3. DynamoDB에 저장할 항목 구성
+        item = {
+            'user_id': user_id,
+            'timestamp': datetime.now().isoformat(),
+            'product': product
+        }
+
+        # 4. insert
+        table.put_item(Item=item)
+
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'message': '선택 필드만 Insert 완료',
+                'item': item
+            }, ensure_ascii=False)
+        }
+
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'error': str(e)}, ensure_ascii=False)
+        }
+---------------------------------------------------------------------------
+sgu-202567-dynamo-rambda
+
+import json
+import boto3
+from datetime import datetime
+
+def lambda_handler(event, context):
+    s3 = boto3.client('s3')
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('sgu-202567-user-likes-time')
+    
+    bucket_name = 'sgu-202567-s3'
+    object_key = 'dynamo_data/user_likes_data.json'
+
+    try:
+        # 1. S3에서 파일 읽기
+        response = s3.get_object(Bucket=bucket_name, Key=object_key)
+        content = response['Body'].read().decode('utf-8')
+        data_list = json.loads(content)  # JSON 배열로 파싱
+
+        # 2. 각 항목 반복 처리
+        for record in data_list:
+            user_id = record.get('user_id')
+            product = record.get('product')
+            
+            if not user_id or not product:
+                print(f"user_id 또는 product 누락: {record}")
+                continue
+            
+            item = {
+                'user_id': user_id,
+                'timestamp': datetime.now().isoformat(),
+                'product': product
+            }
+
+            table.put_item(Item=item)
+            print(f"Inserted: {item}")
+
+        return {
+            'statusCode': 200,
+            'body': json.dumps('전체 레코드 Insert 완료', ensure_ascii=False)
+        }
+
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'error': str(e)}, ensure_ascii=False)
+        }
+-------------------------------------------------------------------------------------
+sgu-202567-layertest (emoji)
+
+import emoji
+
+def lambda_handler(event, context):
+    text = "AWS Lambda is awesome! :rocket:"
+    result = emoji.emojize(text, language='alias')
+    print(result)
+    
+    return {
+        'statusCode': 200,
+        'body': result
+    }
+---------------------------------------------------------------------------------------
+sgu-202567-layertest (requests - get)
+
+import requests
+
+def lambda_handler(event, context):
+    url = "https://httpbin.org/get"
+    response = requests.get(url)
+    data = response.json()
+    print("API 응답:", data)
+    
+    return {
+        'statusCode': 200,
+        'body': str(data)
+    }
+-----------------------------------------------------------------------------------------
+sgu-202567-layertest (requests - post)
+
+import requests
+import json
+
+def lambda_handler(event, context):
+    url = "https://httpbin.org/post"
+    payload = {"name": "test"}
+    response = requests.post(url, json=payload)
+    data = response.json()
+    print("API 응답:", data)
+    
+    return {
+        'statusCode': 200,
+        'body': str(data)
+    }
+------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
