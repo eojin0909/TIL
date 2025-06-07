@@ -1,4 +1,4 @@
-# R언어 시험 대비 요약 및 출제 예시
+# R language final test summary
 
 ---
 
