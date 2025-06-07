@@ -110,5 +110,3 @@ ggplot(df, aes(x=name, y=score)) + geom_bar(stat='identity', fill="tomato")
 - **ggplot2**: geom_bar(stat='identity'), aes, fill
 
 ---
-
-필요하면 더 자세한 예시, 추가 문제, 개념정리 요청 가능!
