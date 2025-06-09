@@ -41,6 +41,10 @@ plot(v1, type = 'o', col = 'red',ylim = c(0,200), axes=F, ann = F )
  
 axis(1, at=1:5, lab=c('MON','TUE', 'WED', 'THU', 'FRI'))
 axis(2, ylim = C(0,200))
+# 1 : x축 하단
+# 2 : y축 좌측
+# 3 : x축 상단
+# 4 : y축 우측
 title(main='FRUITS', col.main = 'red', font.main = 4)
 title(xlab = 'DAY', col.lab = 'black')
 title(ylab = 'PRICE', col.lab = 'blue')
