@@ -15,7 +15,7 @@ library(plyr)
 # 3) arrange : 정렬
 # 4) mutate : 새로운 변수생성
 # 5) summarise( with group_by ) : 주어진 데이터를 집계( min, max, count )
-
+# 6) across : 여러개의 열을 선택해서 동일 작업하기 위함
 library(dplyr)
 
 d1 = read.csv("야구성적.csv")
