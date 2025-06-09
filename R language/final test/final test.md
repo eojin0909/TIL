@@ -69,7 +69,7 @@ v[v %in% outliers] <- NA
 - **mutate()**: 변수 추가/변환
 - **arrange()**: 정렬
 - **summarise() + group_by()**: 그룹별 요약
-- **across(): 여러개의 열을 업
+- **across()**: 여러개의 열을 업
 
 **예시 1: 결측치가 없는 행만 추출 후 평균**
 ```r
