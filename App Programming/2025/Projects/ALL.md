@@ -432,3 +432,137 @@ ListTile(
 ---
 
 
+# Flutter 운동 기록 앱 개발 정리
+
+## 📅 날짜
+2025-06-2
+
+---
+
+## ✅ 주요 기능 목록
+
+- 운동 기록 추가 / 조회
+- 운동 루틴 CRUD
+- 운동 루틴을 운동 기록으로 복사 저장
+- 세트별 운동 기록 구조화
+- 각 세트에 메모 추가
+- Firestore 저장 구조 설계
+
+---
+
+## ✅ 모델 구조
+
+### 🔹 WorkoutSet
+
+```dart
+class WorkoutSet {
+  final String type;
+  final int sets;
+  final int weight;
+  final String memo;
+
+  WorkoutSet({
+    required this.type,
+    required this.sets,
+    required this.weight,
+    this.memo = '',
+  });
+
+  Map<String, dynamic> toMap() { ... }
+  factory WorkoutSet.fromMap(Map<String, dynamic> map) { ... }
+  WorkoutSet copyWith(...) { ... }
+}
+```
+
+### 🔹 Workout
+
+```dart
+class Workout {
+  final String id;
+  final DateTime date;
+  final String title;
+  final List<WorkoutSet> details;
+  final String memo;
+}
+```
+
+### 🔹 WorkoutRoutine
+
+```dart
+class WorkoutRoutine {
+  final String id;
+  final String name;
+  final int reps;
+  final String note;
+  final DateTime date;
+  final List<WorkoutSet> sets;
+}
+```
+
+---
+
+## ✅ 화면 구성 요약
+
+### 1. AddWorkoutScreen
+- 운동 제목 입력
+- 운동 세트 리스트 (운동명 / 세트 수 / 무게 / 세트 메모)
+- 운동 세트 추가 버튼
+- 전체 메모 입력
+- 저장 버튼 → Firestore 저장
+
+### 2. WorkoutListScreen
+- 저장된 운동 기록 조회
+- 각 기록의 세트 목록도 함께 출력
+
+### 3. WorkoutRoutineScreen
+- 저장된 루틴 리스트 조회
+- 루틴 → 운동 기록 복사 기능 포함
+
+### 4. AddRoutineScreen
+- 루틴 이름 / 반복 횟수 / 날짜 / 메모 입력
+- 세트 리스트 구성
+- 저장 → Firestore에 루틴 저장
+
+### 5. EditRoutineScreen
+- 루틴 수정 가능
+- 세트 리스트도 수정 가능
+
+---
+
+## ✅ Firestore 구조 예시
+
+```
+users/
+  └ userId/
+      ├ workouts/
+      │   └ workoutId/
+      │       ├ date
+      │       ├ title
+      │       ├ memo
+      │       └ details: [WorkoutSet...]
+      └ routines/
+          └ routineId/
+              ├ name
+              ├ reps
+              ├ note
+              ├ date
+              └ sets: [WorkoutSet...]
+```
+
+---
+
+## ✅ 에러 해결 요약
+
+- ❌ `WorkoutRoutine.fromMap()` 인자 부족 → `doc.id` 추가
+- ❌ `sets: int.parse(...)` 오류 → `List<WorkoutSet>`로 대체
+- ❌ `'Null' is not a subtype of List` → `as List? ?? []` 방어 처리
+
+---
+
+### 📊 간트차트
+
+![간트차트](./image/간트차트_003.png)
+
+---
+
+
