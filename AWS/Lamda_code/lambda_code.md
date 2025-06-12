@@ -62,6 +62,144 @@ def lambda_handler(event, context):
 
 ---
 
+# 🪣 S3 파일 불러오기 → 난수로 수정 → 다시 저장하기 (Lambda + boto3)
+
+AWS Lambda와 boto3를 활용해 S3에서 파일을 읽고, 내용을 난수(random value)로 수정한 뒤 다시 저장하는 방법입니다.
+
+---
+
+## ✅ 전체 프로세스
+
+1. S3에서 파일 불러오기
+2. 파일 내용을 난수로 수정
+3. 새로 저장하거나 덮어쓰기
+
+---
+
+## ✅ 기본 예제 코드 (텍스트 파일 수정)
+
+```python
+import boto3
+import random
+import string
+
+s3 = boto3.client('s3')
+bucket_name = 'your-bucket-name'
+key = 'your-file.txt'
+
+def lambda_handler(event, context):
+    obj = s3.get_object(Bucket=bucket_name, Key=key)
+    content = obj['Body'].read().decode('utf-8')
+
+    random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=20))
+
+    new_key = f"modified/{key}"
+    s3.put_object(
+        Bucket=bucket_name,
+        Key=new_key,
+        Body=random_string.encode('utf-8')
+    )
+
+    return {
+        'statusCode': 200,
+        'body': f'{new_key}에 저장 완료'
+    }
+```
+
+---
+
+## ✅ JSON 파일 수정 예제
+
+```python
+import boto3
+import json
+import random
+import string
+
+s3 = boto3.client('s3')
+bucket = 'your-bucket-name'
+key = 'data/sample.json'
+
+def lambda_handler(event, context):
+    obj = s3.get_object(Bucket=bucket, Key=key)
+    content = obj['Body'].read().decode('utf-8')
+    data = json.loads(content)
+
+    # 예: 'name' 필드를 랜덤 문자열로 변경
+    data['name'] = ''.join(random.choices(string.ascii_lowercase, k=8))
+
+    new_content = json.dumps(data, ensure_ascii=False)
+    s3.put_object(Bucket=bucket, Key=f'modified/{key}', Body=new_content.encode('utf-8'))
+
+    return {'statusCode': 200, 'body': 'JSON 파일 수정 완료'}
+```
+
+---
+
+## ✅ CSV 파일 수정 예제
+
+```python
+import boto3
+import csv
+import io
+import random
+
+s3 = boto3.client('s3')
+bucket = 'your-bucket-name'
+key = 'data/sample.csv'
+
+def lambda_handler(event, context):
+    obj = s3.get_object(Bucket=bucket, Key=key)
+    content = obj['Body'].read().decode('utf-8')
+
+    input_stream = io.StringIO(content)
+    output_stream = io.StringIO()
+    reader = csv.DictReader(input_stream)
+    fieldnames = reader.fieldnames
+
+    writer = csv.DictWriter(output_stream, fieldnames=fieldnames)
+    writer.writeheader()
+
+    for row in reader:
+        # 예: age 컬럼을 10~99 사이 랜덤 숫자로 수정
+        row['age'] = str(random.randint(10, 99))
+        writer.writerow(row)
+
+    s3.put_object(Bucket=bucket, Key=f'modified/{key}', Body=output_stream.getvalue().encode('utf-8'))
+
+    return {'statusCode': 200, 'body': 'CSV 수정 완료'}
+```
+
+---
+
+## ✅ 랜덤값 생성 요약
+
+| 타입 | 코드 | 설명 |
+|------|------|------|
+| 숫자 | `random.randint(1000, 9999)` | 1000~9999 |
+| 문자열 | `''.join(random.choices(string.ascii_letters, k=10))` | 알파벳 10자 |
+| UUID | `import uuid; uuid.uuid4()` | 고유값 생성 |
+
+---
+
+## ✅ 권한 필요
+
+Lambda 함수가 S3 접근할 수 있도록 IAM Role에 아래 권한이 있어야 합니다:
+
+```json
+{
+  "Effect": "Allow",
+  "Action": [
+    "s3:GetObject",
+    "s3:PutObject"
+  ],
+  "Resource": "arn:aws:s3:::your-bucket-name/*"
+}
+```
+
+
+---
+
 ## 🧾 DynamoDB에 항목 저장
 
 ```python
