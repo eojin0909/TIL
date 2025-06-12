@@ -1,159 +1,115 @@
-# R 프로그래밍 심화 정리: 반복문, 결측치/이상치 처리, dplyr, 시각화
 
----
+# R 실습문제 코드 & 설명 정리
 
-## 🔁 반복문 (for문, while문)
-
-### ✅ for 문
+## 1번 문제(형식 2): 조건별 색상 barplot
 
 ```r
-for (i in 1:5) {
-  cat("반복 중인 숫자:", i, "\n")
+# 값에 따라 색상을 다르게 지정하여 barplot 출력
+
+x1 = c(100, 130, 190, 160, 150, 220)
+par(mfrow = c(1,1))  # 한 화면에 1개의 그래프
+
+# (1) 함수로 구현
+v1 = function(f){
+  colors = NULL
+  for (i in 1:length(f)){
+    if (f[i] >= 200) {
+      colors[i] = 'red'
+    } else if (f[i] >= 180) {
+      colors[i] = 'yellow'
+    } else {
+      colors[i] = 'green'
+    }
+  }
+  return(colors)
 }
-```
+barplot(x1, col = v1(x1))
 
-- `cat()`은 `print()`보다 출력이 간결하며 줄바꿈 조절 가능
-- `1:5`는 시퀀스 생성
-
-### ✅ while 문
-
-```r
-x <- 1
-while (x <= 5) {
-  cat("현재 x:", x, "\n")
-  x <- x + 1
+# (2) 반복문 직접 사용 (range() 대신 1:length(x1)!)
+colors = c()
+for (i in 1:length(x1)){
+  if (x1[i] >= 200) {
+    colors[i] = 'red'
+  } else if (x1[i] >= 180) {
+    colors[i] = 'yellow'
+  } else {
+    colors[i] = 'green'
+  }
 }
+barplot(x1, col = colors)
 ```
 
-- 조건이 TRUE인 동안 반복 수행
-- 무한 루프 방지 위해 내부에서 변수 갱신 필수
+> **주의:**  
+> - R에서 반복문 인덱스는 `1:length(x1)` 혹은 `seq_along(x1)` 사용  
+> - `range()`는 파이썬 함수임!  
+> - 색상은 벡터 인덱스로 할당
 
 ---
 
-## ❓ 결측치(NA) 처리
-
-### ✅ 결측치 확인
-
-```r
-# 전체 데이터 프레임에 NA 포함 여부
-any(is.na(df))
-
-# 열별 NA 개수 확인
-colSums(is.na(df))
-```
-
-### ✅ 결측치 제거
-
-```r
-# NA 포함된 행 제거
-df_clean <- na.omit(df)
-
-# 특정 열 기준 NA 제거
-df <- df[!is.na(df$column_name), ]
-```
-
-### ✅ 결측치 대체
-
-```r
-# 평균으로 대체 (NA를 평균값으로)
-df$column_name[is.na(df$column_name)] <- mean(df$column_name, na.rm = TRUE)
-```
-
----
-
-## ⚠️ 이상치 처리 (Outliers)
-
-### ✅ 시각적 확인: boxplot
-
-```r
-boxplot(df$column, main = "Boxplot for 이상치 확인", col = "orange")
-```
-
-### ✅ 통계적 제거 (IQR 기준)
-
-```r
-Q1 <- quantile(df$column, 0.25)
-Q3 <- quantile(df$column, 0.75)
-IQR <- Q3 - Q1
-
-lower <- Q1 - 1.5 * IQR
-upper <- Q3 + 1.5 * IQR
-
-df_no_outliers <- subset(df, df$column >= lower & df$column <= upper)
-```
-
-- 이상치 기준은 통상적으로 `1.5 * IQR`
-- 필요시 `3 * IQR`도 사용
-
----
-
-## 📦 dplyr 패키지 실전 예시
+## 2, 3, 4번 문제: dplyr로 그룹별 요약
 
 ```r
 library(dplyr)
 
-df %>%
-  filter(score > 80) %>%
-  select(name, score) %>%
-  arrange(desc(score)) %>%
-  mutate(grade = ifelse(score >= 90, "A", "B")) %>%
-  summarise(평균 = mean(score), 최대 = max(score))
+# hwy 결측치 제외 & 구동방식별 hwy 평균 구하기
+mpg %>%
+  filter(!is.na(hwy)) %>%
+  group_by(drv) %>%
+  summarise(mean_hwy = mean(hwy))
 ```
+- `filter(!is.na(hwy))`: 결측치(NA) 제거  
+- `group_by(drv)`: drv별 그룹화  
+- `summarise(mean_hwy = mean(hwy))`: 평균 구하기
 
-| 함수        | 설명                              |
-|-------------|-----------------------------------|
-| `filter()`  | 행 필터링                         |
-| `select()`  | 열 선택                            |
-| `arrange()` | 정렬 (`desc()`로 내림차순)         |
-| `mutate()`  | 새로운 열 추가                     |
-| `summarise()` | 집계 함수 사용                   |
+> **참고:**  
+> - `%in%`은 벡터 조건 추출에 씀  
+> - `hwy[hwy %in% hwy[!is.na(hwy)]]` 처럼도 사용 가능
 
 ---
 
-## 📊 시각화: barplot vs ggplot2
-
-### ✅ 기본 barplot
+## 누적합계 & 레이블 계산 (dplyr vs plyr)
 
 ```r
-sales <- c(100, 200, 150, 250, 300)
-names(sales) <- c("MON", "TUE", "WED", "THU", "FRI")
+# dplyr 사용
+kem2 <- kem %>%
+  group_by(이름) %>%
+  mutate(
+    누적합계 = cumsum(점수),
+    lab = 누적합계 - 점수 / 2
+  )
 
-barplot(sales,
-        main = "요일별 판매량",
-        col = rainbow(5),
-        ylim = c(0, 400),
-        ylab = "판매량",
-        cex.names = 0.9,
-        border = "black")
+# plyr 사용
+library(plyr)
+ddply(kem, '이름', transform, 누적합계 = cumsum(점수), lab = cumsum(점수) - 점수/2)
 ```
+- 둘 다 누적합계, 라벨 위치 계산 목적  
+- dplyr이 최신 스타일 & 속도 빠름
 
-### ✅ ggplot2 막대그래프 (범주형 시각화)
+---
+
+## 5번 문제: ggplot2로 막대그래프 + 레이블
 
 ```r
 library(ggplot2)
 
-df <- data.frame(
-  day = factor(c("MON", "TUE", "WED", "THU", "FRI"),
-               levels = c("MON", "TUE", "WED", "THU", "FRI")),
-  sales = c(100, 200, 150, 250, 300)
-)
-
-ggplot(df, aes(x = day, y = sales, fill = day)) +
-  geom_bar(stat = "identity") +
-  scale_fill_brewer(palette = "Set3") +
-  labs(title = "요일별 판매량", x = "요일", y = "판매량") +
-  theme_minimal()
+ggplot(kor, aes(x = 이름, y = 점수)) +
+  geom_bar(stat = 'identity', color = 'blue', fill = 'pink') +
+  geom_text(aes(label = paste(점수, '점수')), color = 'black', size = 4)
 ```
-
-- `fill = day`: 요일에 따라 색 다르게
-- `scale_fill_brewer()`: 예쁜 색 팔레트
-- `theme_minimal()`: 깔끔한 테마 적용
+- `geom_bar(stat = 'identity')`: 점수(y축) 막대그래프  
+- `color`: 테두리색, `fill`: 내부색  
+- `geom_text()`: 막대 위에 점수 레이블 표시
 
 ---
 
-## ✅ 마무리 팁
+## 기타 팁/주의
 
-- `for`와 `while`은 꼭 **조건 종료 제어**를 넣을 것
-- `dplyr` 파이프라인은 `|>` 대신 `%>%`로 연결 (tidyverse 스타일)
-- `ggplot2`는 데이터 시각화에서 가장 강력한 도구 중 하나
+- **range() vs 1:length(x):**  
+  R 반복문 인덱스는 1:length(x) 혹은 seq_along(x)로!  
+  (range()는 값의 범위 반환이니 혼동 주의)
+- **dplyr 주요 함수:**  
+  filter(), group_by(), summarise(), mutate() 등 활용  
+- **색상 벡터:**  
+  colors <- character(length(x1))로 미리 길이 선언 가능
 
+---
