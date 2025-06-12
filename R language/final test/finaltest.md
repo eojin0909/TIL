@@ -1,42 +1,41 @@
 
-# R 실습문제 코드 & 설명 정리
+# R 실습문제 코드 & 설명 정리 (주석 포함)
 
 ## 1번 문제(형식 2): 조건별 색상 barplot
 
 ```r
-# 값에 따라 색상을 다르게 지정하여 barplot 출력
-
+# x1: 막대그래프에 쓸 데이터 벡터 생성
 x1 = c(100, 130, 190, 160, 150, 220)
 par(mfrow = c(1,1))  # 한 화면에 1개의 그래프
 
-# (1) 함수로 구현
+# (1) 함수로 색상 구분해주는 방법
 v1 = function(f){
-  colors = NULL
-  for (i in 1:length(f)){
-    if (f[i] >= 200) {
+  colors = NULL  # 결과를 저장할 벡터 (초기화)
+  for (i in 1:length(f)){  # 각 원소별로 반복
+    if (f[i] >= 200) {      # 200 이상이면 빨간색
       colors[i] = 'red'
-    } else if (f[i] >= 180) {
+    } else if (f[i] >= 180) { # 180~199는 노란색
       colors[i] = 'yellow'
-    } else {
+    } else {                  # 그 외(179 이하)는 초록색
       colors[i] = 'green'
     }
   }
-  return(colors)
+  return(colors)  # 색상 벡터 반환
 }
-barplot(x1, col = v1(x1))
+barplot(x1, col = v1(x1))  # 구한 색상을 적용하여 막대그래프 출력
 
-# (2) 반복문 직접 사용 (range() 대신 1:length(x1)!)
-colors = c()
+# (2) 반복문 직접 사용 (range() 대신 1:length(x1)! 중요)
+colors = c()  # 색상 저장할 벡터
 for (i in 1:length(x1)){
   if (x1[i] >= 200) {
-    colors[i] = 'red'
+    colors[i] = 'red'      # 200 이상 빨간색
   } else if (x1[i] >= 180) {
-    colors[i] = 'yellow'
+    colors[i] = 'yellow'   # 180~199 노란색
   } else {
-    colors[i] = 'green'
+    colors[i] = 'green'    # 179 이하 초록색
   }
 }
-barplot(x1, col = colors)
+barplot(x1, col = colors)  # 색상 지정하여 막대그래프 출력
 ```
 
 > **주의:**  
@@ -49,13 +48,13 @@ barplot(x1, col = colors)
 ## 2, 3, 4번 문제: dplyr로 그룹별 요약
 
 ```r
-library(dplyr)
+library(dplyr)  # dplyr 패키지 로드
 
 # hwy 결측치 제외 & 구동방식별 hwy 평균 구하기
 mpg %>%
-  filter(!is.na(hwy)) %>%
-  group_by(drv) %>%
-  summarise(mean_hwy = mean(hwy))
+  filter(!is.na(hwy)) %>%     # 결측치(NA) 제외
+  group_by(drv) %>%           # drv별 그룹화
+  summarise(mean_hwy = mean(hwy))  # 그룹별 평균
 ```
 - `filter(!is.na(hwy))`: 결측치(NA) 제거  
 - `group_by(drv)`: drv별 그룹화  
@@ -70,15 +69,15 @@ mpg %>%
 ## 누적합계 & 레이블 계산 (dplyr vs plyr)
 
 ```r
-# dplyr 사용
+# dplyr 사용: 누적합계, 라벨 위치 계산
 kem2 <- kem %>%
   group_by(이름) %>%
   mutate(
-    누적합계 = cumsum(점수),
-    lab = 누적합계 - 점수 / 2
+    누적합계 = cumsum(점수),           # 각 이름별 누적합계
+    lab = 누적합계 - 점수 / 2         # 막대 레이블 표시 위치
   )
 
-# plyr 사용
+# plyr 사용: 같은 작업 (구형 스타일)
 library(plyr)
 ddply(kem, '이름', transform, 누적합계 = cumsum(점수), lab = cumsum(점수) - 점수/2)
 ```
@@ -90,11 +89,12 @@ ddply(kem, '이름', transform, 누적합계 = cumsum(점수), lab = cumsum(점�
 ## 5번 문제: ggplot2로 막대그래프 + 레이블
 
 ```r
-library(ggplot2)
+library(ggplot2)  # ggplot2 패키지 로드
 
+# 이름별 점수 막대그래프, 레이블도 표시
 ggplot(kor, aes(x = 이름, y = 점수)) +
-  geom_bar(stat = 'identity', color = 'blue', fill = 'pink') +
-  geom_text(aes(label = paste(점수, '점수')), color = 'black', size = 4)
+  geom_bar(stat = 'identity', color = 'blue', fill = 'pink') +          # 막대그래프(파란테두리, 핑크색)
+  geom_text(aes(label = paste(점수, '점수')), color = 'black', size = 4) # 막대 위에 '점수' 레이블 표시
 ```
 - `geom_bar(stat = 'identity')`: 점수(y축) 막대그래프  
 - `color`: 테두리색, `fill`: 내부색  
