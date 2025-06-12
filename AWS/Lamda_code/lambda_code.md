@@ -542,7 +542,71 @@ def lambda_handler(event, context):
 
 # AWS Lambda: CloudWatch 로그 & 타임스탬프 생성 방법 (주석 포함)
 
-## ✅ 1. CloudWatch 로그 남기기
+# 📘 AWS CloudWatch 로그 그룹 및 로그 기록 방법 정리
+
+기말 대비 또는 실무에서 사용할 수 있는 CloudWatch 로그 관련 핵심 내용을 정리한 문서입니다.
+
+---
+
+## ✅ 1. CloudWatch 로그 그룹(Log Group) 만드는 법
+
+### 📍 AWS 콘솔에서 만드는 방법
+
+1. [AWS Management Console](https://console.aws.amazon.com/) 접속  
+2. 상단 검색창에 **“CloudWatch”** 입력 후 서비스 이동  
+3. 왼쪽 메뉴에서 **“로그 그룹”** 선택  
+4. **“로그 그룹 생성”** 클릭  
+5. 원하는 이름 입력 (예: `/aws/lambda/my-lambda-loggroup`)  
+6. **“로그 그룹 생성”** 버튼 클릭  
+
+---
+
+### 📍 AWS CLI로 만드는 방법
+
+```bash
+aws logs create-log-group --log-group-name /aws/lambda/my-lambda-loggroup
+```
+
+---
+
+## ✅ 2. Lambda 함수에서 CloudWatch 로그 남기기
+
+- Lambda 함수는 별도 설정 없이 기본적으로 CloudWatch 로그 그룹을 자동으로 생성하고 로그를 남깁니다.
+- `print()` 또는 `logging` 모듈을 사용하면 CloudWatch에 로그가 기록됩니다.
+
+```python
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+def lambda_handler(event, context):
+    print("print로 남긴 로그")              # CloudWatch 로그로 전송됨
+    logger.info("logger로 남긴 INFO 로그")  # CloudWatch 로그로 전송됨
+    logger.error("logger로 남긴 ERROR 로그")
+    return {'statusCode': 200}
+```
+
+- Lambda를 처음 배포하면 `/aws/lambda/함수이름` 로그 그룹이 자동 생성됩니다.
+- 로그 확인:  
+  **AWS Console > CloudWatch > 로그 그룹 > `/aws/lambda/함수이름` > 로그 스트림**
+
+---
+
+## ✅ 3. EC2, ECS 등 다른 리소스에서 CloudWatch 로그 사용
+
+- **EC2**: CloudWatch 에이전트 설치 후 로그 그룹에 로그 전송 가능
+- **ECS**: 태스크 정의에서 `awslogs` 드라이버를 설정하여 로그 전송
+- **직접 로그 전송**: `boto3`의 `put_log_events` 메서드로 프로그래밍 방식 전송도 가능
+
+---
+
+## ✅ 4. 참고 공식 문서
+
+- [AWS CloudWatch 시작하기](https://docs.aws.amazon.com/ko_kr/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html)
+- [Lambda와 CloudWatch 연동](https://docs.aws.amazon.com/lambda/latest/dg/monitoring-cloudwatchlogs.html)
+
+---
 
 AWS Lambda에서 `print()` 또는 `logging` 모듈을 사용하면 로그가 CloudWatch로 전송되어 콘솔에서 확인할 수 있습니다.
 
