@@ -405,3 +405,68 @@ def lambda_handler(event, context):
 ```
 
 ---
+
+
+# AWS Lambda: CloudWatch 로그 & 타임스탬프 생성 방법
+
+## ✅ 1. CloudWatch 로그 남기기
+
+Lambda 함수에서 `print()` 또는 `logging` 모듈을 사용하면 AWS CloudWatch에 로그가 자동으로 기록됩니다.
+
+### 📌 방법 1: `print()` 사용
+```python
+print("로그 메시지입니다")
+```
+
+### 📌 방법 2: `logging` 모듈 사용 (추천)
+```python
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+logger.info("INFO 로그 메시지")
+logger.error("ERROR 로그 메시지")
+```
+
+> 📍 로그 확인 위치:
+> - AWS Console > CloudWatch > 로그 그룹 > `/aws/lambda/함수이름` > 로그 스트림
+
+
+## ✅ 2. 타임스탬프 생성
+
+`datetime` 모듈을 사용하여 현재 시간을 문자열로 생성할 수 있습니다.
+
+### 📌 ISO 8601 형식 (기본 권장 형식)
+```python
+from datetime import datetime
+
+timestamp = datetime.now().isoformat()
+print("타임스탬프:", timestamp)
+```
+
+### ✅ 날짜/시간만 따로 추출
+```python
+now = datetime.now()
+print("날짜:", now.strftime("%Y-%m-%d"))
+print("시간:", now.strftime("%H:%M:%S"))
+```
+
+## ✅ 예제 전체 코드
+
+```python
+import logging
+from datetime import datetime
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+def lambda_handler(event, context):
+    timestamp = datetime.now().isoformat()
+    logger.info(f"[{timestamp}] Lambda 함수가 실행되었습니다")
+
+    return {
+        'statusCode': 200,
+        'body': f"실행된 시간: {timestamp}"
+    }
+```
