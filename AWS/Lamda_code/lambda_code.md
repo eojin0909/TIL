@@ -539,9 +539,6 @@ def lambda_handler(event, context):
 ```
 
 
-
-# AWS Lambda: CloudWatch 로그 & 타임스탬프 생성 방법 (주석 포함)
-
 # 📘 AWS CloudWatch 로그 그룹 및 로그 기록 방법 정리
 
 기말 대비 또는 실무에서 사용할 수 있는 CloudWatch 로그 관련 핵심 내용을 정리한 문서입니다.
