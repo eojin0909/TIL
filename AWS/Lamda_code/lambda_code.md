@@ -371,7 +371,7 @@ def lambda_handler(event, context):
 import requests
 
 def lambda_handler(event, context):
-    url = "https://httpbin.org/get"
+    url = "https://httpbin.org/get" # HTTP 요청/응답 테스트용 api
     response = requests.get(url)
     data = response.json()
     print("API 응답:", data)
@@ -392,7 +392,7 @@ import requests
 import json
 
 def lambda_handler(event, context):
-    url = "https://httpbin.org/post"
+    url = "https://httpbin.org/post" # HTTP 요청/응답 테스트용 api
     payload = {"name": "test"}
     response = requests.post(url, json=payload)
     data = response.json()
