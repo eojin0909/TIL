@@ -481,6 +481,22 @@ def lambda_handler(event, context):
 ```
 
 ---
+## 😂 이모지 변환 레이어 테스트
+
+```python
+import emoji
+
+# emoji 라이브러리를 사용하여 텍스트 안의 이모지 태그(:rocket:)를 실제 이모지로 변환
+def lambda_handler(event, context):
+    text = "AWS Lambda is awesome! :rocket:"      # :rocket:은 이모지 태그 (🚀)
+    result = emoji.emojize(text, language='alias') # 태그를 실제 이모지로 변환
+    print(result)                                  # CloudWatch 로그 출력
+
+    return {
+        'statusCode': 200,
+        'body': result                             # 변환된 결과를 응답으로 반환
+    }
+```
 
 ## 🌐 외부 API GET 요청 (requests 사용)
 
