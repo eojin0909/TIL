@@ -193,10 +193,7 @@ def lambda_handler(event, context):
         }
 ```
 
----
-# 📘 AWS Lambda 함수 정리 - 기말고사 대비 (코드 포함 - 2탄)
 
----
 
 ## 📥 S3에서 단일 JSON → DynamoDB 저장
 **함수명:** `sgu-202567-dynamodb-3c`
