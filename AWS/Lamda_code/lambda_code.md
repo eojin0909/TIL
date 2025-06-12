@@ -246,8 +246,6 @@ def lambda_handler(event, context):
 
 --- 
 
-# (이후 함수들: LambdaB, POST→DynamoDB, S3→DynamoDB, JSON배열 반복저장, 외부API 등 나머지도 이어서 주석 달아서 저장)
-
 
 ---
 
