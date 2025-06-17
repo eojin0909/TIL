@@ -697,7 +697,7 @@ class WeightListScreen extends StatelessWidget {
 
 ---
 
-- ### 📊 간트차트
+### 📊 간트차트
 
 ![간트차트](./image/간트차트_004.png)
 
