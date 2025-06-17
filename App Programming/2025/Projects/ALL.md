@@ -564,4 +564,134 @@ users/
 
 ---
 
+#🧠 체중 기록 기능 - Flutter & Firestore
+
+## 📅 2025-06-02
+## ✅ 모델: `weight_entry.dart`
+
+```dart
+class WeightEntry {
+  final String id;
+  final double weight;
+  final DateTime date;
+
+  WeightEntry({required this.id, required this.weight, required this.date});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'weight': weight,
+      'date': date.toIso8601String(),
+    };
+  }
+
+  factory WeightEntry.fromMap(String id, Map<String, dynamic> map) {
+    return WeightEntry(
+      id: id,
+      weight: map['weight'],
+      date: DateTime.parse(map['date']),
+    );
+  }
+}
+```
+
+---
+
+## ✅ Firestore 서비스 함수
+
+```dart
+final _db = FirebaseFirestore.instance;
+
+Future<void> addWeightEntry(String userId, WeightEntry entry) async {
+  await _db.collection('users').doc(userId).collection('weights').add(entry.toMap());
+}
+
+Stream<List<WeightEntry>> getWeightEntries(String userId) {
+  return _db.collection('users').doc(userId).collection('weights')
+    .orderBy('date', descending: true)
+    .snapshots()
+    .map((snapshot) => snapshot.docs
+      .map((doc) => WeightEntry.fromMap(doc.id, doc.data()))
+      .toList());
+}
+```
+
+---
+
+## ✅ WeightListScreen 예시
+
+```dart
+class WeightListScreen extends StatelessWidget {
+  final String userId = 'testUser';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('체중 기록')),
+      body: StreamBuilder<List<WeightEntry>>(
+        stream: getWeightEntries(userId),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+
+          final entries = snapshot.data!;
+          return ListView.builder(
+            itemCount: entries.length,
+            itemBuilder: (context, index) {
+              final entry = entries[index];
+              return ListTile(
+                title: Text('${entry.weight} kg'),
+                subtitle: Text('${entry.date.year}-${entry.date.month}-${entry.date.day}'),
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () => _showAddWeightDialog(context),
+      ),
+    );
+  }
+
+  void _showAddWeightDialog(BuildContext context) {
+    final controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('체중 입력'),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(hintText: '체중을 입력하세요 (kg)'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('취소')),
+          ElevatedButton(
+            onPressed: () {
+              final weight = double.tryParse(controller.text);
+              if (weight != null) {
+                final newEntry = WeightEntry(
+                  id: '',
+                  weight: weight,
+                  date: DateTime.now(),
+                );
+                addWeightEntry(userId, newEntry);
+                Navigator.pop(context);
+              }
+            },
+            child: Text('저장'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+---
+
+## ✅ 연결 방법
+
+- `main_page.dart`에서 `WeightListScreen()`을 탭에 추가
+- Firestore 보안 규칙 확인 (users/{uid}/weights 허용)
 
