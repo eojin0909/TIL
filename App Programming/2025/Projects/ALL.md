@@ -695,6 +695,8 @@ class WeightListScreen extends StatelessWidget {
 - `main_page.dart`에서 `WeightListScreen()`을 탭에 추가
 - Firestore 보안 규칙 확인 (users/{uid}/weights 허용)
 
+---
+
 - ### 📊 간트차트
 
 ![간트차트](./image/간트차트_004.png)
