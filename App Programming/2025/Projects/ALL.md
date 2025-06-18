@@ -705,7 +705,7 @@ class WeightListScreen extends StatelessWidget {
 
 
 # 🧠 운동/체중 변화 그래프 기능 구현 정리
----
+
 
 ## 📅 2025-06-02
 
