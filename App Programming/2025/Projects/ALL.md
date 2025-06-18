@@ -702,9 +702,9 @@ class WeightListScreen extends StatelessWidget {
 ![간트차트](./image/간트차트_004.png)
 
 ---
----
 
-#🧠 운동/체중 변화 그래프 기능 구현 정리
+
+# 🧠 운동/체중 변화 그래프 기능 구현 정리
 ---
 
 ## 📅 2025-06-02
