@@ -564,7 +564,7 @@ users/
 
 ---
 
-#🧠 체중 기록 기능 - Flutter & Firestore
+# 🧠 체중 기록 기능 - Flutter & Firestore
 
 ## 📅 2025-06-02
 ## ✅ 모델: `weight_entry.dart`
