@@ -702,4 +702,127 @@ class WeightListScreen extends StatelessWidget {
 ![간트차트](./image/간트차트_004.png)
 
 ---
+---
 
+#🧠 운동/체중 변화 그래프 기능 구현 정리
+---
+
+## 📅 2025-06-02
+
+
+## 1. 모델 정의
+
+### ✅ `WorkoutSummary` 모델
+```dart
+class WorkoutSummary {
+  final DateTime date;
+  final int setsCount;
+
+  WorkoutSummary({required this.date, required this.setsCount});
+}
+```
+
+---
+
+## 2. FirestoreService 함수 추가
+
+### ✅ 체중 데이터 불러오기
+```dart
+Stream<List<WeightEntry>> getWeightEntries(String userId) {
+  return FirebaseFirestore.instance
+      .collection('users')
+      .doc(userId)
+      .collection('weights')
+      .orderBy('date', descending: false)
+      .snapshots()
+      .map((snapshot) => snapshot.docs.map((doc) =>
+          WeightEntry.fromMap(doc.id, doc.data() as Map<String, dynamic>)
+      ).toList());
+}
+```
+
+### ✅ 운동 요약 데이터 불러오기
+```dart
+Future<List<WorkoutSummary>> getWorkoutSummaries(String userId) async {
+  final snapshot = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(userId)
+      .collection('workouts')
+      .get();
+
+  final Map<String, int> summaryMap = {};
+
+  for (var doc in snapshot.docs) {
+    final data = doc.data();
+    final Timestamp timestamp = data['date'];
+    final date = timestamp.toDate();
+    final dateKey = '${date.year}-${date.month}-${date.day}';
+
+    final details = data['details'] as List<dynamic>;
+
+    final totalSets = details.fold<int>(0, (sum, item) {
+      if (item is Map && item['sets'] is num) {
+        return sum + (item['sets'] as num).toInt();
+      } else {
+        return sum;
+      }
+    });
+
+    summaryMap[dateKey] = (summaryMap[dateKey] ?? 0) + totalSets;
+  }
+
+  return summaryMap.entries.map((entry) {
+    final date = DateTime.parse(entry.key);
+    return WorkoutSummary(date: date, setsCount: entry.value);
+  }).toList();
+}
+```
+
+---
+
+## 3. ChartScreen 구현
+
+### ✅ ChartScreen에서 데이터 로딩
+```dart
+Future<void> loadChartData() async {
+  final weights = await firestoreService.getWeightEntries(userId).first;
+  final workouts = await firestoreService.getWorkoutSummaries(userId);
+  setState(() {
+    weightEntries = weights;
+    workoutSummaries = workouts;
+  });
+}
+```
+
+### ✅ 차트 시각화 (예: LineChart)
+```dart
+LineChart(
+  LineChartData(
+    titlesData: FlTitlesData(...),
+    lineBarsData: [
+      LineChartBarData(
+        spots: weightEntries.map((e) =>
+            FlSpot(e.date.millisecondsSinceEpoch.toDouble(), e.weight)).toList(),
+        isCurved: true,
+        barWidth: 2,
+        color: Colors.blue,
+      ),
+      LineChartBarData(
+        spots: workoutSummaries.map((e) =>
+            FlSpot(e.date.millisecondsSinceEpoch.toDouble(), e.setsCount.toDouble())).toList(),
+        isCurved: true,
+        barWidth: 2,
+        color: Colors.red,
+      ),
+    ],
+  ),
+)
+```
+
+---
+
+## 4. 기타 사항
+
+- x축 날짜 → `DateFormat`을 이용해 표시
+- y축은 각각 `체중`, `운동 세트 수`
+- 데이터가 없을 경우를 대비해 조건 분기 처리 필요
